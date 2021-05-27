@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base href="/" />
+    <title>EIDOS</title>
+    <meta charset="UTF-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
+    />
+    <meta name="keywords" content="keywords" />
+    <meta name="description" content="description" />
+    <script type="text/javascript">
+      // window.SC_DISABLE_SPEEDY = true;
+      window.onerror = function(err) {
+        if(location.href.includes('alertError')) {
+          alert(JSON.stringify(err));
+        }
+      }
+      window._config = {
+        PUBLIC_URL: '',
+        EOS_NODE: 'https://eos.newdex.one',
+      };
+    </script>
+  </head>
+
+  <body ontouchstart>
+    <canvas id="canvas" style="display:none;"></canvas>
+    <div id="root"></div>
+  </body>
+</html>
