@@ -48,20 +48,20 @@ export default function Eidos() {
         <div className="donate-item">
           eos:
           <CopyToClipboard
-            text="0x7cFCfc2d275F4392a98Ff36930A0f7cb29070E64"
+            text="guangliang22"
             onCopy={() => message.success(intl['common.已复制'])}
           >
-            <div className="address">guangliang12</div>
+            <div className="address">guangliang22</div>
           </CopyToClipboard>
         </div>
         <div className="donate-item">
           eth:
           <CopyToClipboard
-            text="0x507d008F414eFa4a913d67801284f90181eb003b"
+            text="0xE8F9dF0EB05B8973f1317d330c61a305511Fb2bD"
             onCopy={() => message.success(intl['common.已复制'])}
           >
             <div className="address">
-              {'0x7cFCfc2d275F4392a98Ff36930A0f7cb29070E64'
+              {'0xE8F9dF0EB05B8973f1317d330c61a305511Fb2bD'
                 .split('')
                 .map((t, i) => (
                   // eslint-disable-next-line react/no-array-index-key
