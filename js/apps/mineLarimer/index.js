@@ -91,6 +91,7 @@ export default function Transfer() {
         const msg = err.message || `${err}`;
         message.error(msg);
         setIsMining(false);
+        setMinIndex(index + 1);
       });
   };
 
