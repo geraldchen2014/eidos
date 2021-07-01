@@ -54,6 +54,9 @@ const common = {
   Node: {
     zh: '节点',
   },
+  'Next Mine Time': {
+    zh: '下次获取时间',
+  },
 };
 
 export default common;

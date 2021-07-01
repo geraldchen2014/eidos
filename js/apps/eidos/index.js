@@ -32,7 +32,7 @@ export default function Eidos() {
         </a>
       </div>
       {/* <EosNodes /> */}
-      <Tabs defaultActiveKey="tradeLarimer">
+      <Tabs defaultActiveKey="larimer">
         <TabPane tab={intl['eidos.Stake Eidos']} key="stake">
           <StakeEidos />
         </TabPane>

@@ -1,7 +1,8 @@
 import _ from 'lodash';
 import React, { useEffect, useState } from 'react';
 import { useIntl } from 'js/locals';
-import digit, { isNumber } from 'js/utils/digit';
+import digit from 'js/utils/digit';
+import moment from 'moment';
 import Input from 'js/components/InputNumber';
 import { Button, Checkbox, message, Select } from 'antd';
 import { getBalance } from 'js/utils/eosService';
@@ -14,14 +15,13 @@ const Option = Select.Option;
 export default function Transfer() {
   const intl = useIntl();
   const [index, setIndex] = useState(0);
-  const [minIndex, setMinIndex] = useState(0);
-  const [num, setNum] = useState('10000');
   const [larimerPoolBalance, setLarimerPoolBalance] = useState('');
   const [diyBalance, setDiyBalance] = useState('');
   const [loopMine, setLoopMine] = useState(false);
   const [isMining, setIsMining] = useState(false);
   const [period, setPeriod] = useState('5');
   const [larimerBalance, setLarimerBalance] = useState('');
+  const [lastMinTime, setLastMinTime] = useState(0);
   const { account, sendTransaction } = useEos();
 
   // useEffect(() => {
@@ -38,7 +38,6 @@ export default function Transfer() {
         const totalKey = parseFloat(_.get(resp, '[0]') || 0);
         setDiyBalance(totalKey);
       });
-
       getBalance({
         code: larimer?.code,
         account: account?.name,
@@ -58,8 +57,19 @@ export default function Transfer() {
     });
   };
 
+  let nextMine = 0;
+  let nextMineStr = '';
+  if (loopMine && lastMinTime) {
+    nextMine = lastMinTime + period * 1000 * 60;
+    nextMineStr = moment(nextMine).format('HH:mm:ss');
+  }
+
   useEffect(() => {
     getData();
+    const now = new Date().valueOf();
+    if (now > nextMine && loopMine) {
+      mine();
+    }
     const timer = setTimeout(() => {
       setIndex(index + 1);
     }, 10000);
@@ -69,7 +79,6 @@ export default function Transfer() {
   }, [index, account?.name]);
 
   const mine = () => {
-    if (!num) return;
     setIsMining(true);
     sendTransaction({
       chain: diy.chain,
@@ -77,10 +86,11 @@ export default function Transfer() {
       symbol: diy.symbol,
       decimals: diy.decimals,
       address: 'minelarimers',
-      quantity: num,
+      quantity: 10000,
       memo: 'mined in stakemyeidos.top',
     })
       .then(() => {
+        setLastMinTime(new Date().valueOf());
         message.success(intl['common.Send Success']);
         setIsMining(false);
         setTimeout(() => {
@@ -88,25 +98,12 @@ export default function Transfer() {
         }, 3000);
       })
       .catch((err) => {
+        setLastMinTime(new Date().valueOf());
         const msg = err.message || `${err}`;
         message.error(msg);
         setIsMining(false);
-        setMinIndex(index + 1);
       });
   };
-
-  useEffect(() => {
-    if (!loopMine || !minIndex) return () => {};
-    if (loopMine && isNumber(period) && minIndex > 0 && !isMining) {
-      mine();
-    }
-    const timer = setTimeout(() => {
-      setMinIndex(minIndex + 1);
-    }, (period || 1) * 60 * 1000);
-    return () => {
-      clearTimeout(timer);
-    };
-  }, [minIndex]);
 
   return (
     <StyledIndex>
@@ -124,12 +121,13 @@ export default function Transfer() {
         <Input defaultValue="minelarimers" disabled />
       </div>
       <div className="title">{intl['common.转账数量']}</div>
-      <Input value={num} onChange={(e) => setNum(e.target.value)} />
+      <Input value="10000" disable />
       <div className="period">
         <Checkbox
           value={loopMine}
           onChange={(e) => {
             setLoopMine(e.target.checked);
+            if (!lastMinTime) mine();
           }}
         >
           {intl['eidos.Loop Period']}({intl['eidos.Minutes']})
@@ -167,13 +165,9 @@ export default function Transfer() {
       <Button
         type="primary"
         onClick={() => {
-          if (loopMine && isNumber(period) && num) {
-            setMinIndex(1);
-            return;
-          }
           mine();
         }}
-        loading={isMining || (loopMine && minIndex > 0)}
+        loading={isMining}
       >
         {intl['eidos.Mine XXX Larimer'].replace(
           'XXX',
@@ -182,6 +176,11 @@ export default function Transfer() {
             : ''
         )}
       </Button>
+      {!!nextMine && (
+        <div className="title">
+          {intl['common.Next Mine Time']}: {nextMineStr}
+        </div>
+      )}
     </StyledIndex>
   );
 }
