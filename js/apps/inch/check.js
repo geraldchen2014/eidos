@@ -1,3 +1,4 @@
+import moment from 'moment';
 export const check = async (val = 500) => {
   try {
     const str = '000000000000000000';
@@ -92,8 +93,11 @@ export const check = async (val = 500) => {
       usdc,
       arb: mcb,
       bsc: mcb2,
+      time: moment().format('HH:mm:ss'),
     };
   } catch {
-    return check(val);
+    return {
+      time: moment().format('HH:mm:ss'),
+    };
   }
 };
